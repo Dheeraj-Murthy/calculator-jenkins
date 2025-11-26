@@ -172,13 +172,13 @@ java -jar calculator-cli-1.0.0.jar add 5 3
 
 ### GitHub Repository
 
-- **URL**: [GitHub Repository Link]
+- **URL**: https://github.com/Dheeraj-Murthy/calculator-jenkins.git
 - **Branch**: `main`
 - **Description**: Source code, documentation, and configuration files
 
 ### DockerHub Repository
 
-- **URL**: [DockerHub Repository Link]
+- **URL**: https://hub.docker.com/repository/docker/meenigam/calculator/
 - **Image**: `meenigam/calculator:latest`
 - **Description**: Containerized calculator application
 
