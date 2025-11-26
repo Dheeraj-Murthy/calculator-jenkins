@@ -31,8 +31,8 @@ pipeline {
             }
             post {
                 always {
-                    // Publish test results
-                    publishTestResults testResultsPattern: 'test-results.xml'
+                    // Archive test results
+                    junit 'test-results.xml'
                 }
                 success {
                     echo 'All tests passed!'
