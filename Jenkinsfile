@@ -64,7 +64,11 @@ pipeline {
                     
                     // Login to DockerHub (credentials should be configured in Jenkins)
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "DOCKER_CONFIG=/tmp echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin"
+                        sh '''
+                            export DOCKER_CONFIG=/tmp
+                            echo '{"credsStore": ""}' > /tmp/config.json
+                            echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin
+                        '''
                     }
                     
                     // Push the image
