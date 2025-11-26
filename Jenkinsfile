@@ -18,24 +18,11 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Install Maven if not present
+                    // Install Maven using Homebrew on macOS
                     sh '''
                         if ! command -v mvn &> /dev/null; then
-                            echo "Installing Maven..."
-                            if command -v apt-get &> /dev/null; then
-                                sudo apt-get update && sudo apt-get install -y maven
-                            elif command -v yum &> /dev/null; then
-                                sudo yum install -y maven
-                            elif command -v brew &> /dev/null; then
-                                brew install maven
-                            else
-                                echo "Installing Maven manually..."
-                                wget https://archive.apache.org/dist/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz
-                                tar -xzf apache-maven-3.9.4-bin.tar.gz
-                                sudo mv apache-maven-3.9.4 /opt/maven
-                                echo 'export PATH=/opt/maven/bin:$PATH' >> ~/.bashrc
-                                export PATH=/opt/maven/bin:$PATH
-                            fi
+                            echo "Installing Maven with Homebrew..."
+                            brew install maven
                         fi
                         mvn clean compile
                     '''
@@ -46,16 +33,9 @@ pipeline {
         
         stage('Test') {
             steps {
-                script {
-                    // Ensure Maven is available and run tests
-                    sh '''
-                        if ! command -v mvn &> /dev/null; then
-                            export PATH=/opt/maven/bin:$PATH
-                        fi
-                        mvn test
-                    '''
-                    echo 'Tests completed successfully'
-                }
+                echo 'Running unit tests...'
+                sh 'mvn test'
+                echo 'Tests completed successfully'
             }
             post {
                 always {
@@ -73,16 +53,9 @@ pipeline {
         
         stage('Package') {
             steps {
-                script {
-                    // Ensure Maven is available and package the application
-                    sh '''
-                        if ! command -v mvn &> /dev/null; then
-                            export PATH=/opt/maven/bin:$PATH
-                        fi
-                        mvn package -DskipTests
-                    '''
-                    echo 'Application packaged successfully'
-                }
+                echo 'Packaging Java application...'
+                sh 'mvn package -DskipTests'
+                echo 'Application packaged successfully'
             }
         }
         
