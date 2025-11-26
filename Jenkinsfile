@@ -47,7 +47,11 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    sh "/usr/local/bin/docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                    sh '''
+                        export DOCKER_CONFIG=/tmp
+                        echo '{"credsStore": ""}' > /tmp/config.json
+                        /usr/local/bin/docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                    '''
                     echo 'Docker image built successfully'
                 }
             }
@@ -60,15 +64,15 @@ pipeline {
                     
                     // Login to DockerHub (credentials should be configured in Jenkins)
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin"
+                        sh "DOCKER_CONFIG=/tmp echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin"
                     }
                     
                     // Push the image
-                    sh "/usr/local/bin/docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "DOCKER_CONFIG=/tmp /usr/local/bin/docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                     echo 'Docker image pushed successfully to DockerHub'
                     
                     // Logout from DockerHub
-                    sh '/usr/local/bin/docker logout'
+                    sh 'DOCKER_CONFIG=/tmp /usr/local/bin/docker logout'
                 }
             }
         }
