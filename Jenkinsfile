@@ -66,13 +66,22 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh '''
                             export DOCKER_CONFIG=/tmp
+                            export HTTP_PROXY=""
+                            export HTTPS_PROXY=""
+                            export NO_PROXY="registry-1.docker.io,docker.io"
                             echo '{"credsStore": ""}' > /tmp/config.json
                             echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin
                         '''
                     }
                     
                     // Push the image
-                    sh "DOCKER_CONFIG=/tmp /usr/local/bin/docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh '''
+                        export DOCKER_CONFIG=/tmp
+                        export HTTP_PROXY=""
+                        export HTTPS_PROXY=""
+                        export NO_PROXY="registry-1.docker.io,docker.io"
+                        /usr/local/bin/docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    '''
                     echo 'Docker image pushed successfully to DockerHub'
                     
                     // Logout from DockerHub
