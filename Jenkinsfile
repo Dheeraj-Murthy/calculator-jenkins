@@ -18,15 +18,20 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Install Maven using Homebrew on macOS
+                    // Install Maven manually
                     sh '''
                         echo "=== BUILD STAGE STARTING ==="
                         if ! command -v mvn &> /dev/null; then
-                            echo "Installing Maven with Homebrew..."
-                            brew install maven
+                            echo "Installing Maven manually..."
+                            curl -O https://archive.apache.org/dist/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz
+                            tar -xzf apache-maven-3.9.4-bin.tar.gz
+                            export PATH=$PWD/apache-maven-3.9.4/bin:$PATH
+                            echo "Maven installed at: $PWD/apache-maven-3.9.4/bin/mvn"
+                        else
+                            echo "Maven already available"
                         fi
                         echo "Running Maven compile..."
-                        mvn clean compile
+                        $PWD/apache-maven-3.9.4/bin/mvn clean compile
                     '''
                     echo 'Application compiled successfully'
                 }
@@ -35,9 +40,13 @@ pipeline {
         
         stage('Test') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
-                echo 'Tests completed successfully'
+                script {
+                    sh '''
+                        echo "Running Maven tests..."
+                        $PWD/apache-maven-3.9.4/bin/mvn test
+                    '''
+                    echo 'Tests completed successfully'
+                }
             }
             post {
                 always {
@@ -55,9 +64,13 @@ pipeline {
         
         stage('Package') {
             steps {
-                echo 'Packaging Java application...'
-                sh 'mvn package -DskipTests'
-                echo 'Application packaged successfully'
+                script {
+                    sh '''
+                        echo "Packaging Java application..."
+                        $PWD/apache-maven-3.9.4/bin/mvn package -DskipTests
+                    '''
+                    echo 'Application packaged successfully'
+                }
             }
         }
         
