@@ -20,10 +20,12 @@ pipeline {
                 script {
                     // Install Maven using Homebrew on macOS
                     sh '''
+                        echo "=== BUILD STAGE STARTING ==="
                         if ! command -v mvn &> /dev/null; then
                             echo "Installing Maven with Homebrew..."
                             brew install maven
                         fi
+                        echo "Running Maven compile..."
                         mvn clean compile
                     '''
                     echo 'Application compiled successfully'
