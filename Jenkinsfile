@@ -17,22 +17,22 @@ pipeline {
         
         stage('Build') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'python3 -m pip install -r requirements.txt'
-                echo 'Dependencies installed successfully'
+                echo 'Building Java application...'
+                sh 'mvn clean compile'
+                echo 'Application compiled successfully'
             }
         }
         
         stage('Test') {
             steps {
                 echo 'Running unit tests...'
-                sh 'python3 -m pytest tests/ -v --junitxml=test-results.xml'
+                sh 'mvn test'
                 echo 'Tests completed successfully'
             }
             post {
                 always {
                     // Archive test results
-                    junit 'test-results.xml'
+                    junit 'target/surefire-reports/*.xml'
                 }
                 success {
                     echo 'All tests passed!'
@@ -40,6 +40,14 @@ pipeline {
                 failure {
                     echo 'Tests failed! Pipeline will stop.'
                 }
+            }
+        }
+        
+        stage('Package') {
+            steps {
+                echo 'Packaging Java application...'
+                sh 'mvn package -DskipTests'
+                echo 'Application packaged successfully'
             }
         }
         

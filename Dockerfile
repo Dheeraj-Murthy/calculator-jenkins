@@ -1,37 +1,37 @@
 # Multi-stage build for Simple Calculator CLI Application
-FROM python:3.12-slim AS builder
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
 
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Copy pom.xml first for better caching
+COPY pom.xml .
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
 
 # Production stage
-FROM python:3.12-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy installed dependencies from builder stage
-COPY --from=builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-# Copy application code
-COPY src/ ./src/
-
-# Make the calculator script executable
-RUN chmod +x src/calculator.py
+# Copy the built JAR from builder stage
+COPY --from=builder /app/target/calculator-cli-*.jar calculator-cli.jar
 
 # Create a non-root user
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
+RUN addgroup -g 1000 appgroup && adduser -u 1000 -G appgroup -s /bin/sh -D appuser
+RUN chown -R appuser:appgroup /app
 USER appuser
 
 # Set entrypoint for the calculator CLI
-ENTRYPOINT ["python", "src/calculator.py"]
+ENTRYPOINT ["java", "-jar", "calculator-cli.jar"]
 
 # Default command shows help
-CMD ["--help"]
+CMD []
