@@ -17,17 +17,33 @@ pipeline {
         
         stage('Build') {
             steps {
-                echo 'Building Java application...'
-                sh 'mvn clean compile'
-                echo 'Application compiled successfully'
+                script {
+                    // Use Maven Docker container to build the application
+                    sh '''
+                        docker run --rm \
+                            -v ${WORKSPACE}:/workspace \
+                            -w /workspace \
+                            maven:3.9.4-eclipse-temurin-17 \
+                            mvn clean compile
+                    '''
+                    echo 'Application compiled successfully'
+                }
             }
         }
         
         stage('Test') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
-                echo 'Tests completed successfully'
+                script {
+                    // Use Maven Docker container to run tests
+                    sh '''
+                        docker run --rm \
+                            -v ${WORKSPACE}:/workspace \
+                            -w /workspace \
+                            maven:3.9.4-eclipse-temurin-17 \
+                            mvn test
+                    '''
+                    echo 'Tests completed successfully'
+                }
             }
             post {
                 always {
@@ -45,9 +61,17 @@ pipeline {
         
         stage('Package') {
             steps {
-                echo 'Packaging Java application...'
-                sh 'mvn package -DskipTests'
-                echo 'Application packaged successfully'
+                script {
+                    // Use Maven Docker container to package the application
+                    sh '''
+                        docker run --rm \
+                            -v ${WORKSPACE}:/workspace \
+                            -w /workspace \
+                            maven:3.9.4-eclipse-temurin-17 \
+                            mvn package -DskipTests
+                    '''
+                    echo 'Application packaged successfully'
+                }
             }
         }
         
