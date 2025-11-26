@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /app/target/calculator-cli-*.jar calculator-cli.jar
 
 # Create a non-root user
-RUN addgroup -g 1000 appgroup && adduser -u 1000 -G appgroup -s /bin/sh -D appuser
+RUN groupadd -g 1000 appgroup && useradd -u 1000 -g appgroup -s /bin/sh appuser
 RUN chown -R appuser:appgroup /app
 USER appuser
 
