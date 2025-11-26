@@ -182,63 +182,33 @@ java -jar calculator-cli-1.0.0.jar add 5 3
 - **Image**: `meenigam/calculator:latest`
 - **Description**: Containerized calculator application
 
-## Performance Metrics
+## Screenshots
 
-### Build Performance
+### DockerHub Repository
 
-- **Maven Download**: ~30 seconds (first time only)
-- **Compilation**: ~10 seconds
-- **Testing**: ~15 seconds
-- **Packaging**: ~20 seconds
-- **Docker Build**: ~60 seconds
+<!-- Add your DockerHub repository screenshot here -->
 
-### Container Metrics
+![DockerHub Repository](screenshots/dockerhub-repo.png)
 
-- **Image Size**: ~150MB (Alpine-based)
-- **Startup Time**: <2 seconds
-- **Memory Usage**: ~50MB
+_Description: DockerHub repository showing the calculator image with tags and
+pull information_
 
-## Security Considerations
+### Jenkins Build Success
 
-### Jenkins Security
+<!-- Add your Jenkins build success screenshot here -->
 
-- Credential masking for sensitive data
-- Secure Docker registry authentication
-- No hardcoded secrets in pipeline
+![Jenkins Build Success](screenshots/jenkins-build-success.png)
 
-### Container Security
+_Description: Jenkins pipeline showing successful completion of all stages_
 
-- Non-root user execution
-- Minimal base image
-- No shell access in runtime container
+### Additional Screenshots
 
-## Future Enhancements
+<!-- Add any other relevant screenshots here -->
 
-### Potential Improvements
+#### Jenkins Pipeline Stages
 
-1. **Extended Operations**: Add exponentiation, modulus operations
-2. **Input Validation**: Enhanced CLI argument parsing
-3. **Logging**: Structured logging framework
-4. **Configuration**: External configuration file support
-5. **Performance**: Benchmarking and optimization
+![Jenkins Pipeline Stages](./screenshots/jenkins.jpg)
 
-### Pipeline Enhancements
+#### Docker Image Details
 
-1. **Code Quality**: SonarQube integration
-2. **Security Scanning**: Container image vulnerability scanning
-3. **Multi-environment**: Staging and production deployments
-4. **Monitoring**: Application performance monitoring
-
-## Conclusion
-
-This project demonstrates a complete DevOps workflow from development to
-deployment. The CI/CD pipeline ensures code quality through automated testing
-and provides reliable, repeatable deployments. The containerized application is
-portable, secure, and production-ready.
-
----
-
-**Project Status**: ✅ Complete  
-**Last Updated**: November 2024  
-**Maintainer**: Dheeraj Murthy
-
+![Docker Image Details](./screenshots/dockerhub.jpg)

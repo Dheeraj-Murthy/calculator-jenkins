@@ -79,10 +79,10 @@ pipeline {
                 script {
                     echo 'Building Docker image...'
                     sh '''
-                        if command -v docker &> /dev/null; then
+                        if command -v /usr/local/bin/docker &> /dev/null; then
                             export DOCKER_CONFIG=/tmp
                             echo '{"credsStore": ""}' > /tmp/config.json
-                            docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                            /usr/local/bin/docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
                         else
                             echo "Docker not available, skipping Docker image build"
                         fi
@@ -99,7 +99,7 @@ pipeline {
                     
                     // Login to DockerHub (credentials should be configured in Jenkins)
                     script {
-                        if (sh(script: 'command -v docker &> /dev/null', returnStatus: true) == 0) {
+                        if (sh(script: 'command -v /usr/local/bin/docker &> /dev/null', returnStatus: true) == 0) {
                             withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                                 sh '''
                                     export DOCKER_CONFIG=/tmp
@@ -107,7 +107,7 @@ pipeline {
                                     export HTTPS_PROXY=""
                                     export NO_PROXY="registry-1.docker.io,docker.io"
                                     echo '{"credsStore": ""}' > /tmp/config.json
-                                    echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+                                    echo ${DOCKER_PASS} | /usr/local/bin/docker login -u ${DOCKER_USER} --password-stdin
                                 '''
                             }
                             
@@ -117,7 +117,7 @@ pipeline {
                                 export HTTP_PROXY=""
                                 export HTTPS_PROXY=""
                                 export NO_PROXY="registry-1.docker.io,docker.io"
-                                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                /usr/local/bin/docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
                             '''
                         } else {
                             echo "Docker not available, skipping Docker push"
@@ -127,8 +127,8 @@ pipeline {
                     
                     // Logout from DockerHub
                     script {
-                        if (sh(script: 'command -v docker &> /dev/null', returnStatus: true) == 0) {
-                            sh 'DOCKER_CONFIG=/tmp docker logout'
+                        if (sh(script: 'command -v /usr/local/bin/docker &> /dev/null', returnStatus: true) == 0) {
+                            sh 'DOCKER_CONFIG=/tmp /usr/local/bin/docker logout'
                         }
                     }
                 }
