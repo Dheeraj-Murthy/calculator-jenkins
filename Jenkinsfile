@@ -18,7 +18,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip install -r requirements.txt'
+                sh 'python3 -m pip install -r requirements.txt'
                 echo 'Dependencies installed successfully'
             }
         }
@@ -26,7 +26,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running unit tests...'
-                sh 'python -m pytest tests/ -v --junitxml=test-results.xml'
+                sh 'python3 -m pytest tests/ -v --junitxml=test-results.xml'
                 echo 'Tests completed successfully'
             }
             post {
@@ -59,7 +59,7 @@ pipeline {
                     echo 'Pushing Docker image to DockerHub...'
                     
                     // Login to DockerHub (credentials should be configured in Jenkins)
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'meenigam', passwordVariable: 'dheerumurthy123')]) {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh "echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin"
                     }
                     
